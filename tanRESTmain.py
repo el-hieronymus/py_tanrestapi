@@ -2,27 +2,7 @@
 
 This script is an example of how to use the Tanium REST API to deploy a package to a
 single endpoint or a group of endpoints.
-Use of the config.json file is optional. If you do not use the config.json file, you
-will be prompted for the API key.
 
-// Information for the use of json config file for Tanium API calls
-// Please enter your configuration information below
-// - API key  (required)
-// - Base URL (required)
-// - Target is the computer or single endpoint
-// - Target Question is the Tanium Interact question to target a group of endpoints
-// - Action Group is the Tanium Computer Group to target
-
-// SAMPLE USAGE:
-
-// -noverify
-// -baseurl https://taniumserver/
-// -action-group "All Computers" 
-// -package "Custom Tagging - Add Tags" testtag
-// Group of endpoints:
-// -target-question "Custom Tag Exists[TestTag,1] matches true" 
-// Single endpoint:
-// -target "DELL-PC-3002" 
 '''
 #!/usr/bin/env python3
 

@@ -1,7 +1,7 @@
 import json
 
 '''
-Class TanRESTgetconfig is for reading the configuration file for the Tanium REST API.
+Class TanGetConfig is for reading the configuration file for the Tanium REST API.
 '''
 class TanGetConfig:
     # Class variables
