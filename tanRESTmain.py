@@ -38,34 +38,38 @@ from tanRESTactions import TanActions
 CONFIG_FILE = "taas_conf.json"
 # End class variables
 
-def get_args():
+def get_config_from_args():
     """ Get the command line arguments """
-    parser = argparse.ArgumentParser(description="Deploy a package to a single endpoint or a group of endpoints")
-    parser.add_argument("-baseurl", help="Base URL for the Tanium server")
-    parser.add_argument("-apikey", help="API key for the Tanium server")
-    parser.add_argument("-noverify", help="Disable SSL certificate verification", action="store_true")
-    parser.add_argument("-target", help="Target endpoint")
-    parser.add_argument("-target-question", help="Target question")
-    parser.add_argument("-action-group", help="Action group")
-    parser.add_argument("-package", help="Package name")
-    parser.add_argument("-parameters", help="Package parameters", nargs="+")
-    return parser.parse_args()
+    parser = argparse.ArgumentParser(description="Tanium REST API Configuration")
+    parser.add_argument("-config_file", help="Path to config file")
+   
+    return parser.parse_args().config_file
+# End get_args
 
-def get_config():
+def get_config(config_file=None):
     """ Get the configuration """
-    config = TanGetConfig(CONFIG_FILE).get_config()
-    if not config:
-        config = {}
-    
-        
-    return config
+    if config_file is not None:
+        print("Using configuration file: {}".format(config_file))
+        json_config = TanGetConfig(config_file).get_config()
+    else:
+        print("Using default configuration file: {}".format(CONFIG_FILE))
+        json_config = TanGetConfig(CONFIG_FILE).get_config()
+
+    if json_config == {}:
+        print("Error: Configuration file not found or invalid JSON")
+        return
+
+    return json_config
+# End get_config
 
 def main():
     """ Main function """
 
-   
-
-   
+    # Get the command line arguments
+    if get_config_from_args():
+        config = get_config(get_config_from_args()) 
+    else:
+        config = get_config()   
     
     # Disable SSL certificate verification if noverify is set
     if config["noverify"]:
