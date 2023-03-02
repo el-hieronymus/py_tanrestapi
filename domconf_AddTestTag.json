@@ -1,0 +1,10 @@
+{
+    "action_group": "All Computers",
+    "package": "Custom Tagging - Add Tags",
+    "target": "",
+    "target_question": "Custom Tag Exists[TestTag,1] matches true",
+    "noverify": "true",
+    "baseurl": "https://192.168.1.62",
+    "api_key": "token-d4a2a8ccd8b078a250689741b52d2311c4aad61b99e1b076174f20f304",
+    "parameters": "TestTag,1"
+}
