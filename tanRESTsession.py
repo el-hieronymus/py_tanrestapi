@@ -18,7 +18,7 @@ class TaniumSession(requests.Session):
     '''
 
     # Session object for Tanium API
-    def __init__(self, base_url, api_key, timeout=60, completion_percentage=100, verify=True, *args, **kwargs):
+    def __init__(self, base_url, api_key, verify=True, timeout=60, completion_percentage=100, *args, **kwargs):
         self._base_url = base_url
         self._api_key = api_key
         print("TaniumSession# Base URL: {}".format(self._base_url))   

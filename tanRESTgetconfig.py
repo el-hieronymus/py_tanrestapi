@@ -11,10 +11,10 @@ class TanGetConfig:
     def __init__(self, config_file=None):
         self._config = {}
         if config_file is not None:
-            print("TanGetConfig# Using configuration file: {}".format(config_file))
+            #print("TanGetConfig# Using configuration file: {}".format(config_file))
             self._config_file = config_file
         else:
-            print("TanGetConfig# Using default configuration file: {}".format(self.CONFIG_FILE))
+            #print("TanGetConfig# Using default configuration file: {}".format(self.CONFIG_FILE))
             self._config_file = self.CONFIG_FILE
         self._config = self._read_config_file()
     # End __init__

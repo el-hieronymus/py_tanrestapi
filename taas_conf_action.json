@@ -2,9 +2,9 @@
     "action_group": "All Computers",
     "package": "Custom Tagging - Add Tags",
     "target": "",
-    "target_question": "Custom Tag Exists[TestTag,1] matches true",
+    "target_question": "Custom Tag Exists[TestTagAEM1,1] matches true",
     "noverify": "true",
-    "baseurl": "https://taas-test-api.cloud.tanium.com",
+    "base_url": "https://taas-test-api.cloud.tanium.com",
     "api_key": "token-c5ec68b821168800d3cabdc776786b978460b2a2b9bc395e2a1a513c92",
-    "parameters": "TestTag,1"
+    "parameters": "TestTagAEM1,1"
 }
