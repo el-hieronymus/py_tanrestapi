@@ -1,0 +1,8 @@
+{
+    "name": "Action Debugging",
+    "description": "This is a debugging tool for the sensor. ",
+    "type": "python",
+    "request": "launch",
+    "program": "${workspaceFolder}/tankRESTmain.py",
+    "args": ["-config_file ./taas_conf_action.json", "-output console", "action"],
+}

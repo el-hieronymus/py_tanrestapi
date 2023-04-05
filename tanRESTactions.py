@@ -25,9 +25,9 @@ class TanActions(TaniumSession):
     # End class variables
 
     # Constructor
-    def __init__(self, baseurl, api_key, verify=True):
+    def __init__(self, baseurl, api_key, verify=True, timeout=120):
         # Call the parent constructor
-        super().__init__(baseurl, api_key, verify)
+        super().__init__(baseurl, api_key, verify, timeout)
 
     # Deploy a package to a list of endpoints
 
@@ -87,7 +87,7 @@ class TanActions(TaniumSession):
             return
 
         # forward to output:
-        self._output(output, response, package_details)
+        self._output(output, response)
         # End deploy_action_multiple_endpoints
 
     # Deploy a package to a single endpoint
@@ -221,7 +221,7 @@ class TanActions(TaniumSession):
         # # Print the results in a table
         from prettytable import PrettyTable
         table = PrettyTable()
-        #table.field_names = ["Endpoint", "Status", "Count"]
+        #table.field_names = ["Computer Name", "Status", "Count"]
         table.field_names = [column["name"] for column in result.get("columns", [])]
 
         # Find the index of the "Action Statuses" column
@@ -232,6 +232,9 @@ class TanActions(TaniumSession):
                     break
             else: raise ("Error: Action Statuses field not found in result columns!")
 
+        stars = ["*"]
+
+        # Determine what percentage of endpoints have finished with the action
         while (evaluated < self._completion_percentage or finished < 100.0) and time.time() < end_time:
             # Get the results
             resp = self.get("{}{}".format(
@@ -250,14 +253,35 @@ class TanActions(TaniumSession):
             evaluated = 0 if not row_count else float(total_evaluated_endpoints) / float(row_count) * 100.0
 
             # Print the results in a table
-            for row in result.get("rows", []):
-                table.add_row([", ".join([value["text"] for value in column]) for column in row["data"]])
+            for row in result.get("rows", []):               
+                # TODO: Check is values in row with 
+                # "table.add_row([", ".join([value["text"] for value in column]) for column in row["data"]])"
+                # is already in the table, if so, skip it:
+
+                for row in table.rows:
+                    print ("row: %s" % row)
+                    values = [value["text"] for value in row["data"]]
+                    if values not in table.rows:
+                        table.add_row([", ".join([value["text"] for value in column]) for column in row["data"]])
+
             table.align = "c"
             print("\033c")
             print(table)
-            print("Estimated %2f%% of %d endpoints finished with action" % (evaluated, row_count))
+            print("")
+            print("Collecting data from %d endpoints" % row_count)
+            print("Percentage of endpoints evaluated: %2f%%" % evaluated)
+            print("Percentage of endpoints finished with action: %2f%%" % finished)
+            print("Time elapsed: %d seconds" % (time.time() - start_time))
+            print("Time remaining: %d seconds" % (end_time - time.time()))
+            print("")
+            
+            #append a start ("*") to the stars list and print it:
+            stars.append("*")
+            print("".join(stars))
 
-            time.sleep(5)
+            print("Please wait...")
+
+            time.sleep(0.5)
     # End _stream_action_results
 
     def _get_package_details(self, package_name):
@@ -279,8 +303,8 @@ class TanActions(TaniumSession):
     # End _get_package_details
 
     def _build_action_parameters(self, package_details, parameters):
-        package_id = package_details.get("id")
-        expire_seconds = package_details.get("expire_seconds")
+        #package_id = package_details.get("id")
+        #expire_seconds = package_details.get("expire_seconds")
         parameter_definition = package_details.get("parameter_definition")
         formatted_parameters = []
         if parameter_definition:
@@ -318,21 +342,80 @@ class TanActions(TaniumSession):
         pass
     # End _get_action_results
 
-    def _output(self, output, response, package_details):
+    # output results to json file
+    def _stream_action_results_into_json(self, action_id, output_file):
+        """ poll for updated results for an action id """
+        evaluated = 0
+        finished = 0
+        start_time = time.time()
+        end_time = start_time + self._timeout
 
-        # print response and store action ID
+        resp = self.get("{}{}".format(self._base_url, self.RESULTS_ENDPOINT.format(id=action_id)))
+        resp.raise_for_status()
+        result = resp.json().get("data", {}).get("result_sets", [])[0]
+
+        
+
+        # Find the index of the "Action Statuses" column
+        if result.get("columns"):
+            for index, item in enumerate(result.get("columns", [])):
+                if item["name"] == "Action Statuses":
+                    action_status_index = index
+                    break
+            else: raise ("Error: Action Statuses field not found in result columns!")
+
+        stars = ["*", "*",]
+
+        while (evaluated < self._completion_percentage or finished < 100.0) and time.time() < end_time:
+            # Get the results
+            resp = self.get("{}{}".format(
+                self._base_url, self.RESULTS_ENDPOINT.format(id=action_id)))
+            resp.raise_for_status()
+            result = resp.json().get("data", {}).get("result_sets", [])[0]
+
+            # Determine what percentage of endpoints have finished with the action
+            action_statuses = [row["data"][action_status_index][0]["text"]
+                               for row in result.get("rows", [])]
+
+            # Determine what percentage of endpoints have been evaluated
+            evaluated_statuses = ["Expired", "Stopped", "Failed", "Verified", "NotSucceeded", "Completed"]
+            total_evaluated_endpoints = len(   [action_status for action_status in action_statuses if action_status in evaluated_statuses]) 
+            row_count = len(result.get("rows", []))
+            evaluated = 0 if not row_count else float(total_evaluated_endpoints) / float(row_count) * 100.0
+            print("\033c")
+            print("Collecting data from %d endpoints" % row_count)
+            print("Percentage of endpoints evaluated: %2f%%" % evaluated)
+            print("Percentage of endpoints finished with action: %2f%%" % finished)
+            print("Time elapsed: %d seconds" % (time.time() - start_time))
+            print("Time remaining: %d seconds" % (end_time - time.time()))
+            print("")
+            
+            #append a start ("*") to the stars list and print it:
+            stars.append("*")
+            print("".join(stars))
+
+            print("Please wait...")
+
+
+           
+            time.sleep(5)
+        # write json data to file
+        print("Writing results to file: %s" % output_file)
+        with open(output_file, 'w') as outfile:
+            json.dump(result, outfile, indent=2)    
+    # End _stream_action_results_into_json
+
+    def _output(self, output, response):
+            # print response and store action ID
         print(json.dumps(response.json(), indent=2))
         action_id = response.json()["data"]["id"]
 
         if output == "console":
             # stream results to console
-            self._stream_action_results(
-                action_id, package_details["verify_group"]["id"] != 0)
-        elif output == "json":
+            self._stream_action_results(action_id)
+
+        else: 
             # write json data to file
-            with open('deploy_action_{}.json'.format(datetime.datetime), 'w') as outfile:
-                json.dump(response.json(), outfile, indent=2)
-        else:
-            print("Error: Invalid output type")
-            return
+            self._stream_action_results_into_json(action_id, output)
+
     # End _output

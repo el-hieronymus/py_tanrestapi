@@ -1,6 +1,10 @@
 import tanRESTsession
 import json
 import datetime
+import time
+import sys
+import os
+
 
 
 '''
@@ -13,8 +17,8 @@ class TanSensors(tanRESTsession.TaniumSession):
     SENSOR_BY_NAME_ENDPOINT = "/api/v2/sensors/by-name/{sensor_name}"
     # End class variables
     
-    def __init__(self, baseurl, api_key, verify=True):
-        super().__init__(baseurl, api_key, verify)
+    def __init__(self, baseurl, api_key, verify=True, timeout=60):
+        super().__init__(baseurl, api_key, verify, timeout)
     # End __init__
 
 
@@ -45,23 +49,36 @@ def _output(self, output, response, package_details):
             return
     # End _output
 
-def _stream_sensor_results(self, action_id, verify_group):
-        """ Stream sensor results to console """
-        endpoint = "{}{}".format(self._base_url, self.ACTION_RESULTS_ENDPOINT).format(
-            action_id=action_id)
-        response = self.get(endpoint)
+def _stream_sensor_results(self, sessionid):
+        """ Stream results from a sensor to the console """
+        endpoint = "{}{}".format(self._base_url, self.SENSOR_RESULTS_ENDPOINT).format(
+            sessionid=sessionid)
+        response = self.get(endpoint, stream=True)
         response.raise_for_status()
-        response_json = response.json()
+
+        # With PrettyTable print results to console
+        from prettytable import PrettyTable
+        table = PrettyTable(["Computer Name", "Computer ID", "Sensor Name", "Sensor ID", "Sensor Status", "Sensor Result"])
+        table.align["Computer Name"] = "l"
+        table.align["Sensor Name"] = "l"
+        table.align["Sensor Result"] = "l"
+
+        # Loop through the results
+        for line in response.iter_lines():
+            if line:
+                # Convert the line to a json object
+                result = json.loads(line.decode('utf-8'))
+
+                # Print the results to the console
+                table.add_row([result["computer_name"], result["computer_id"], result["sensor_name"], result["sensor_id"], result["status"], result["result"]])
+                print(table)
+                table.clear_rows()
+
+                # If the status is not "in progress", then exit the loop
+                if result["status"] != "in progress":
+                    break
         
-        if response_json["data"]["status"] == "complete":
-            print("Action completed")
-            if verify_group:
-                print("Verify group results:")
-                print(json.dumps(response_json["data"]["verify_group_results"], indent=2))
-            print("Target group results:")
-            print(json.dumps(response_json["data"]["target_group_results"], indent=2))
-        else:
-            print("Action not yet complete")
+
     # End _stream_sensor_results
 
 if __name__ == "__main__":

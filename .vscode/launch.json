@@ -1,0 +1,34 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Remove Tags - Debugging",
+            "type": "python",
+            "request": "launch",
+            "program": "${workspaceFolder}/tanRESTmain.py",
+            "console": "integratedTerminal",
+            "args": [
+                "--config_file", "./taas_conf_removetag.json",
+                "--output", "console",
+                "--task", "action",
+            ],
+            "justMyCode": true
+        },
+        {
+            "name": "Add Tag - Action Debugging",
+            "type": "python",
+            "request": "launch",
+            "program": "${workspaceFolder}/tanRESTmain.py",
+            "console": "integratedTerminal",
+            "args": [
+                "--config_file", "./taas_conf_action.json",
+                "--output", "./result.json",
+                "--task", "action",
+            ],
+            "justMyCode": true
+        }
+    ]
+}

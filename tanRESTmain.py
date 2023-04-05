@@ -17,46 +17,54 @@ from tanRESTsensors import TanSensors
 CONFIG_FILE = "taas_conf.json"
 # End class variables
 
-def get_config_from_args():
+def _get_config_from_args():
     """ Get the command line arguments """
     parser = argparse.ArgumentParser(description="Tanium REST API Configuration")
-    parser.add_argument("-config_file", help="Path to config file", default=None)
-    parser.add_argument("-output", help="Style of response output: console or file", default="console")
-    parser.add_argument("question", help="Option to run question", default=None, nargs="?", const="question")
-    parser.add_argument("action", help="Option to run action", default=None, nargs="?", const="action")
+    parser.add_argument("-c", "--config_file", help="Path to config file", default=None, required=False)
+    parser.add_argument("-o", "--output", help="Style of response output: console or file", default="console", required=False)
+    parser.add_argument("-t", "--task", help="Task definition to run either action or question",  required=True)
+    parser.add_argument("-i", "--info", help="Print this help info", default=None, required=False)
 
-    return {"config_file":parser.parse_args().config_file, "output":parser.parse_args().output, "question":parser.parse_args().question, "action":parser.parse_args().action}
+    args = parser.parse_args()
+    print ("args: {}".format(args))
+    config_from_args = {"config_file":args.config_file, "output":args.output, "task":args.task, "help":args.info}
+
+    return config_from_args
 # End get_config_from_args
 
-def get_config(config_files=None):
+def _get_config(config_list=None):
     """ Get the configuration """
     json_config = {}
 
+    if config_list["help"] is True:
+        _print_help()
+        exit()
+
     # Use the default configuration file if none is specified
-    if config_files is None:
-        config_files = {"config_file":None, "output":None}
+    if config_list is None:
+        config_list = {"config_file":None, "output":None}
 
     # If a configuration file is specified, use it
-    if config_files["config_file"] is not None and os.path.isfile(config_files["config_file"]):
-        print("Using configuration file: {}".format(config_files["config_file"] ))
-        json_config = TanGetConfig(config_files["config_file"]).get_config()
+    if config_list["config_file"] is not None and os.path.isfile(config_list["config_file"]):
+        print("Using configuration file: {}".format(config_list["config_file"] ))
+        json_config = TanGetConfig(config_list["config_file"]).get_config()
     else:
     # Otherwise, return an error
         print("Error: Configuration file not found or invalid JSON")
     
     # If an output file is specified, use it
-    if config_files["output"] is not None and os.path.isfile(config_files["output"]):
-        print("Using output file: {}".format(config_files["output"]))
-        json_config.update({"output":config_files["output"]})
+    if config_list["output"] is not None:
+        print("Using output file: {}".format(config_list["output"]))
+        json_config.update({"output":config_list["output"]})
     # Otherwise output to console
     else:
         print("Using default output to console")
         json_config.update({"output":"console"})
     
-    # Check if Action is sensor or action:
-    if config_files["question"] is not None:
+    # Check if Action-Task is question or action:
+    if config_list["task"] == "question":
         json_config.update({"question":True})
-    elif config_files["action"] is not None:
+    elif config_list["task"] == "action":
         json_config.update({"action":True})
     else:
         print("Error: Please specify either question or action")
@@ -69,26 +77,47 @@ def get_config(config_files=None):
     return json_config
 # End get_config
 
+def _print_header():
+    print("Tanium REST API Script")
+    print("copyright 2023, Tanium, Inc., andy.elmaghraby@tanium.com")
+    print("This script is an example of how to use the Tanium REST API to deploy a package to a single endpoint or a group of endpoints.")
+    print("")
+    _print_help()
+    print("")
+# End print_header
+
+def _print_help():
+    print("Usage: tanRESTmain.py  -t, --task [-c, --config_file <path to config file>] [-o, --output <console or file>]")
+    print("")
+    print("Options:")
+    print("  -t, --task <question or action>  Specify the task to run. Either question or action")
+    print("  -c, --config_file <path to config file>  Specify the path to the configuration file")
+    print("  -o, --output <console or file>  Specify the output style. Either console or file")
+    print("  -i, --info  Show this help message and exit")
+    print("")
+    print("Examples:")
+    print("Example: tanRESTmain.py  --task question --config_file ./question_conf.json --output result.json")
+    print("Example: tanRESTmain.py  -t action -c ./action_conf.json -o console")
+    print("")
+# End print_help
+        
+        
+
 def main():
     """ Main function """
     # Write an Intro for the use of the Tanium REST API script:
-    print("Tanium REST API Script")
-    print("This script is an example of how to use the Tanium REST API to deploy a package to a single endpoint or a group of endpoints.")
-    print("")
-    print("Usage: tanRESTmain.py [-config_file <path to config file>] [-output <console or file>] <sensor or package> <package name>")
-    print("Example: tanRESTmain.py -config_file ./question_conf.json -output result.json question")
-    print("Example: tanRESTmain.py -config_file ./action_conf.json -output console action")
-    
+    _print_header()  
 
     # Get the command line arguments
-    if get_config_from_args():
-        config = get_config(get_config_from_args()) 
+    if _get_config_from_args():
+        config = _get_config(_get_config_from_args()) 
     else:
-        config = get_config()
+        config = _get_config()
     
     if config is None:
         return
     
+     
     # Disable SSL certificate verification if noverify is set
     if config["noverify"]:
         print("Insecure Warning: Certificate Verification Disabled. Further warnings suppressed.")  
@@ -100,7 +129,7 @@ def main():
         print("Error: Please specify either target or target-question.")
         return
 
-    if config["package"]:
+    if config["action"]:
         # Create the TaniumSession object
         actions = TanActions(config["base_url"], config["api_key"], not config["noverify"])
         
@@ -116,11 +145,7 @@ def main():
         # Create the TaniumSession object
         ask_question = TanSensors(config["base_url"], config["api_key"], not config["noverify"])
         ask_question.get_sensor_data(config["question"], config["output"])
-        # Run the question
-        
-           
-
-
+# End main()
 
 if __name__ == "__main__":
     main()

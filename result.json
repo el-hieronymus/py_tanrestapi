@@ -1,0 +1,631 @@
+{
+  "age": 0,
+  "id": 24085821,
+  "report_count": 938,
+  "saved_question_id": 490005,
+  "question_id": 24085821,
+  "archived_question_id": 0,
+  "seconds_since_issued": 1240,
+  "issue_seconds": 0,
+  "expire_seconds": 3660,
+  "tested": 168,
+  "passed": 158,
+  "mr_tested": 168,
+  "mr_passed": 168,
+  "estimated_total": 167,
+  "select_count": 2,
+  "error_count": 0,
+  "no_results_count": 0,
+  "columns": [
+    {
+      "hash": 3409330187,
+      "name": "Computer Name",
+      "type": 1
+    },
+    {
+      "hash": 1792443391,
+      "name": "Action Statuses",
+      "type": 1
+    },
+    {
+      "hash": 0,
+      "name": "Count",
+      "type": 3
+    }
+  ],
+  "filtered_row_count": 28,
+  "filtered_row_count_machines": 28,
+  "row_count": 28,
+  "row_count_machines": 28,
+  "item_count": 28,
+  "rows": [
+    {
+      "id": 1482571472,
+      "cid": 2412789805,
+      "data": [
+        [
+          {
+            "text": "Hyper-V-lab.ritalab1.local"
+          }
+        ],
+        [
+          {
+            "text": "5529091:Completed."
+          }
+        ],
+        [
+          {
+            "text": "1"
+          }
+        ]
+      ]
+    },
+    {
+      "id": 3554181447,
+      "cid": 780595445,
+      "data": [
+        [
+          {
+            "text": "jrider-w10-1343.tanlab.local"
+          }
+        ],
+        [
+          {
+            "text": "5529091:Completed."
+          }
+        ],
+        [
+          {
+            "text": "1"
+          }
+        ]
+      ]
+    },
+    {
+      "id": 2375354215,
+      "cid": 4267031002,
+      "data": [
+        [
+          {
+            "text": "cli-win10.potato.local"
+          }
+        ],
+        [
+          {
+            "text": "5529091:Completed."
+          }
+        ],
+        [
+          {
+            "text": "1"
+          }
+        ]
+      ]
+    },
+    {
+      "id": 773841430,
+      "cid": 1221944401,
+      "data": [
+        [
+          {
+            "text": "kcw-client09win.lab.local"
+          }
+        ],
+        [
+          {
+            "text": "5529091:Completed."
+          }
+        ],
+        [
+          {
+            "text": "1"
+          }
+        ]
+      ]
+    },
+    {
+      "id": 1022559506,
+      "cid": 1781784437,
+      "data": [
+        [
+          {
+            "text": "JPO-Win10-TaaSTest"
+          }
+        ],
+        [
+          {
+            "text": "5529091:Completed."
+          }
+        ],
+        [
+          {
+            "text": "1"
+          }
+        ]
+      ]
+    },
+    {
+      "id": 1226031154,
+      "cid": 2374555260,
+      "data": [
+        [
+          {
+            "text": "win-perf-debug"
+          }
+        ],
+        [
+          {
+            "text": "5529091:Completed."
+          }
+        ],
+        [
+          {
+            "text": "1"
+          }
+        ]
+      ]
+    },
+    {
+      "id": 3241033973,
+      "cid": 3265486415,
+      "data": [
+        [
+          {
+            "text": "jrider-w10-polish.tanlab.local"
+          }
+        ],
+        [
+          {
+            "text": "5529091:Completed."
+          }
+        ],
+        [
+          {
+            "text": "1"
+          }
+        ]
+      ]
+    },
+    {
+      "id": 2758853019,
+      "cid": 2613163296,
+      "data": [
+        [
+          {
+            "text": "TANIUM-3ULL5A9D"
+          }
+        ],
+        [
+          {
+            "text": "5529091:Completed."
+          }
+        ],
+        [
+          {
+            "text": "1"
+          }
+        ]
+      ]
+    },
+    {
+      "id": 553455510,
+      "cid": 3090635860,
+      "data": [
+        [
+          {
+            "text": "win10-1909-5"
+          }
+        ],
+        [
+          {
+            "text": "5529091:Completed."
+          }
+        ],
+        [
+          {
+            "text": "1"
+          }
+        ]
+      ]
+    },
+    {
+      "id": 1000926259,
+      "cid": 2136740835,
+      "data": [
+        [
+          {
+            "text": "Broughall-2022-T-Test"
+          }
+        ],
+        [
+          {
+            "text": "5529091:Completed."
+          }
+        ],
+        [
+          {
+            "text": "1"
+          }
+        ]
+      ]
+    },
+    {
+      "id": 1270476082,
+      "cid": 2479298719,
+      "data": [
+        [
+          {
+            "text": "gmorgandom-taastest-win10"
+          }
+        ],
+        [
+          {
+            "text": "5529091:Completed."
+          }
+        ],
+        [
+          {
+            "text": "1"
+          }
+        ]
+      ]
+    },
+    {
+      "id": 2760900735,
+      "cid": 851012360,
+      "data": [
+        [
+          {
+            "text": "WIN-10-SM-FSA"
+          }
+        ],
+        [
+          {
+            "text": "5529091:Completed."
+          }
+        ],
+        [
+          {
+            "text": "1"
+          }
+        ]
+      ]
+    },
+    {
+      "id": 3047354830,
+      "cid": 1476133123,
+      "data": [
+        [
+          {
+            "text": "CL-Win10-13"
+          }
+        ],
+        [
+          {
+            "text": "5529091:Completed."
+          }
+        ],
+        [
+          {
+            "text": "1"
+          }
+        ]
+      ]
+    },
+    {
+      "id": 3609423723,
+      "cid": 1966652969,
+      "data": [
+        [
+          {
+            "text": "w7x86-1"
+          }
+        ],
+        [
+          {
+            "text": "5529091:Completed."
+          }
+        ],
+        [
+          {
+            "text": "1"
+          }
+        ]
+      ]
+    },
+    {
+      "id": 4204199691,
+      "cid": 3538936777,
+      "data": [
+        [
+          {
+            "text": "DESKTOP-FK3R5UE"
+          }
+        ],
+        [
+          {
+            "text": "5529091:Completed."
+          }
+        ],
+        [
+          {
+            "text": "1"
+          }
+        ]
+      ]
+    },
+    {
+      "id": 4109346738,
+      "cid": 4221368322,
+      "data": [
+        [
+          {
+            "text": "DESKTOP-04575GR"
+          }
+        ],
+        [
+          {
+            "text": "5529091:Completed."
+          }
+        ],
+        [
+          {
+            "text": "1"
+          }
+        ]
+      ]
+    },
+    {
+      "id": 1019018664,
+      "cid": 3420572451,
+      "data": [
+        [
+          {
+            "text": "win11-tcloud-ac.minushuman.local"
+          }
+        ],
+        [
+          {
+            "text": "5529091:Completed."
+          }
+        ],
+        [
+          {
+            "text": "1"
+          }
+        ]
+      ]
+    },
+    {
+      "id": 58802540,
+      "cid": 3137894135,
+      "data": [
+        [
+          {
+            "text": "DCWIN10SS"
+          }
+        ],
+        [
+          {
+            "text": "5529091:Completed."
+          }
+        ],
+        [
+          {
+            "text": "1"
+          }
+        ]
+      ]
+    },
+    {
+      "id": 2162809879,
+      "cid": 2690794121,
+      "data": [
+        [
+          {
+            "text": "DESKTOP-NOQQ7EN"
+          }
+        ],
+        [
+          {
+            "text": "5529091:Completed."
+          }
+        ],
+        [
+          {
+            "text": "1"
+          }
+        ]
+      ]
+    },
+    {
+      "id": 945311264,
+      "cid": 2299962495,
+      "data": [
+        [
+          {
+            "text": "ap-Windows11-A"
+          }
+        ],
+        [
+          {
+            "text": "5529091:Completed."
+          }
+        ],
+        [
+          {
+            "text": "1"
+          }
+        ]
+      ]
+    },
+    {
+      "id": 3239632197,
+      "cid": 4079817954,
+      "data": [
+        [
+          {
+            "text": "DESKTOP-MGJ5GG3"
+          }
+        ],
+        [
+          {
+            "text": "5529091:Completed."
+          }
+        ],
+        [
+          {
+            "text": "1"
+          }
+        ]
+      ]
+    },
+    {
+      "id": 3088584254,
+      "cid": 3411320567,
+      "data": [
+        [
+          {
+            "text": "BB-DB.barclaylab.vandelay"
+          }
+        ],
+        [
+          {
+            "text": "5529091:Completed."
+          }
+        ],
+        [
+          {
+            "text": "1"
+          }
+        ]
+      ]
+    },
+    {
+      "id": 536260021,
+      "cid": 2914655231,
+      "data": [
+        [
+          {
+            "text": "W10Clone02.tanlabvm.local"
+          }
+        ],
+        [
+          {
+            "text": "5529091:Completed."
+          }
+        ],
+        [
+          {
+            "text": "1"
+          }
+        ]
+      ]
+    },
+    {
+      "id": 1644967306,
+      "cid": 888447976,
+      "data": [
+        [
+          {
+            "text": "bstock-Win10B.TANDOM1.LOC"
+          }
+        ],
+        [
+          {
+            "text": "5529091:Completed."
+          }
+        ],
+        [
+          {
+            "text": "1"
+          }
+        ]
+      ]
+    },
+    {
+      "id": 4200081774,
+      "cid": 1480731134,
+      "data": [
+        [
+          {
+            "text": "win11armtest"
+          }
+        ],
+        [
+          {
+            "text": "5529091:Completed."
+          }
+        ],
+        [
+          {
+            "text": "1"
+          }
+        ]
+      ]
+    },
+    {
+      "id": 3551243399,
+      "cid": 1205454854,
+      "data": [
+        [
+          {
+            "text": "BH-WIN-PC01"
+          }
+        ],
+        [
+          {
+            "text": "5529091:Completed."
+          }
+        ],
+        [
+          {
+            "text": "1"
+          }
+        ]
+      ]
+    },
+    {
+      "id": 3239612383,
+      "cid": 963804318,
+      "data": [
+        [
+          {
+            "text": "saibot-10.zaman.com"
+          }
+        ],
+        [
+          {
+            "text": "5529091:Completed."
+          }
+        ],
+        [
+          {
+            "text": "1"
+          }
+        ]
+      ]
+    },
+    {
+      "id": 1058424099,
+      "cid": 1509017015,
+      "data": [
+        [
+          {
+            "text": "perf-nuc-win11"
+          }
+        ],
+        [
+          {
+            "text": "5529091:Completed."
+          }
+        ],
+        [
+          {
+            "text": "1"
+          }
+        ]
+      ]
+    }
+  ]
+}
