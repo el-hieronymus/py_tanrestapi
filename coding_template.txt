@@ -1,0 +1,48 @@
+===============
+Check Disk Space
+===============
+
+.. author:: user@company.com
+.. date:: 9.3.2018
+
+This script checks the free space of each disk in the system and ensures that free space is more than or equal to 20% on any disk.
+
+Usage
+=====
+
+::
+
+    python check_disk_space.py
+
+Output
+======
+
+The script outputs the total and free space on each disk, and checks the %Free column to ensure that free space is more than or equal to 20% on any disk.
+
+Example
+=======
+
+Example usage and output:
+
+::
+
+    $ python check_disk_space.py
+    Disk Name  Total Space  Free Space  % Free
+    C:         476.9 GB     95.3 GB     20%
+    D:         1.81 TB      567.4 GB    31%
+    E:         931.5 GB     186.3 GB    20%
+
+Parameters
+==========
+
+This script does not accept any parameters.
+
+Returns
+=======
+
+This script does not return any values.
+
+Contact
+=======
+
+If you have any questions or issues with this script, please contact user@company.com.
