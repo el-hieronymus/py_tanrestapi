@@ -190,7 +190,7 @@ class TanActions(TaniumSession):
                 action_group_id = action_group["id"]
                 break
         else:
-            raise ("Error: Action Group '%s' not found" % action_group_name)
+            raise Exception("Error: Action Group '%s' not found" % action_group_name)
 
         return action_group_id
     # End _get_action_group_id
