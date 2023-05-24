@@ -4,7 +4,7 @@
     "target": "",
     "target_question": "Custom Tag Exists[TestTagAEM3,1] matches false",
     "noverify": "true",
-    "task": "action",
+    "action": "true",
     "base_url": "https://taas-test-api.cloud.tanium.com",
     "api_key": "token-092dae085337711522b47e1c114afcf9d87d60659761f52bb5e0ee3031",
     "parameters": "TestTagAEM3,1"
