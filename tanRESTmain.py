@@ -62,8 +62,8 @@ def _get_config(config_list=None):
         json_config.update({"output":"console"})
     
     # Check if Action-Task is question or action:
-    if config_list["task"] == "question":
-        json_config.update({"question":True})
+    if config_list["task"] == "sensor":
+        json_config.update({"sensor":True})
     elif config_list["task"] == "action":
         json_config.update({"action":True})
     else:
@@ -117,6 +117,7 @@ def main():
     if config is None:
         return
     
+    print("Config: {}".format(config))
      
     # Disable SSL certificate verification if noverify is set
     if config["noverify"]:
@@ -124,10 +125,10 @@ def main():
         urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)    
 
     if not (config["target"] or config["target_question"]):
-        raise ValueError("Must specify target")
-        # Confirm either a single computer name or a targeting question was used
-        print("Error: Please specify either target or target-question.")
-        return
+        """ Confirm either a single computer name or a targeting question was used """
+        raise ValueError("Error: You must specify either a target or a target-question.")
+        
+
 
     if config["action"]:
         # Create the TaniumSession object
@@ -141,10 +142,18 @@ def main():
             group_action = {"action_group":config["action_group"], "target_question":config["target_question"], "package":config["package"], "parameters":config["parameters"]}
             actions.deploy_action_multiple_endpoints(group_action, config["output"])
     
-    elif config["question"]:
+    elif config["sensor"]:
         # Create the TaniumSession object
-        ask_question = TanSensors(config["base_url"], config["api_key"], not config["noverify"])
-        ask_question.get_sensor_data(config["question"], config["output"])
+        call_question = TanSensors(config["base_url"], config["api_key"], not config["noverify"])
+
+        default_wait_time = 30
+
+        # Get the resulting data for a question
+        call_question.get_question_data(
+            config["question"],
+            config["output"],
+            config.get("wait_time", default_wait_time)
+        )
 # End main()
 
 if __name__ == "__main__":

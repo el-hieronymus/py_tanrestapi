@@ -37,7 +37,7 @@ class TaniumSession(requests.Session):
         }
 
         # Initialize the session
-        super(TaniumSession, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         self.headers.update(headers)
         self.verify = verify
     # End __init__

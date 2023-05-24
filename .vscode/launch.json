@@ -13,7 +13,7 @@
             "args": [
                 "--config_file", "./taas_conf_question.json",
                 "--output", "console",
-                "--task", "question",
+                "--task", "sensor",
             ],
             "justMyCode": true
         }, 

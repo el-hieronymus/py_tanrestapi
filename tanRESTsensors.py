@@ -1,9 +1,7 @@
 import tanRESTsession
-import json
-import datetime
 import time
-import sys
-import os
+import json
+from prettytable import PrettyTable
 
 
 
@@ -15,6 +13,9 @@ To use the Tanium API-Gateway, please visit:  https://docs.tanium.com/api_gatewa
 class TanSensors(tanRESTsession.TaniumSession):
     # Class variables
     SENSOR_BY_NAME_ENDPOINT = "/api/v2/sensors/by-name/{sensor_name}"
+    PARSE_QUESTION = "/api/v2/parse_question"
+    QUESTIONS = "/api/v2/questions"
+    RESULT_DATA = "/api/v2/result_data/question/{session_id}?json_pretty_print=1"
     # End class variables
     
     def __init__(self, baseurl, api_key, verify=True, timeout=60):
@@ -22,64 +23,162 @@ class TanSensors(tanRESTsession.TaniumSession):
     # End __init__
 
 
-    def _get_sensor_data(self, sensor_name, **kwargs):
-        """ Get the definition for a sensor """
-        endpoint =  "{}{}".format(self._base_url, self.SENSOR_BY_NAME_ENDPOINT).format(sensor_name=sensor_name)
-        response = self.get(endpoint)
-        response.raise_for_status()
-        return _output(response, **kwargs)
-    # End _get_sensor_data
+    """def get_question_data(self, question, output="console", wait_time=30):
+        # Get the result data for a question 
+        session_id = self._get_question_id(self._parse_question(question))   # Parse the question and get the session ID
+        
+        time.sleep(wait_time) # Wait for the question to run
 
-def _output(self, output, response, package_details):
-    
-        # print response and store action ID
-        print(json.dumps(response.json(), indent=2))
-        action_id = response.json()["data"]["id"]
+        endpoint = "{}{}".format(self._base_url, self.RESULT_DATA.format(session_id=session_id) )
+        try:
+            response = self.get(endpoint)
+            response.raise_for_status()
+            return self._output(response, output)
+        except:
+            print(Exception, " Error: Could not get the result data for the question in get_result_data()")
+            return
+    # End get_result_data
+    """
+
+    def get_question_data(self, question, output="console", wait_time=30):
+        """ Get the result data for a question """
+        session_id = self._get_question_id(self._parse_question(question))
+        self._stream_sensor_results(session_id)
+    # End get_question_data
+
+
+
+
+    def _get_question_id(self, json_data):
+        """ Get the session ID for a question """
+        endpoint = "{}{}".format(self._base_url, self.QUESTIONS)
+        
+        headers = {
+            "Content-Type": "application/json"
+        }
+        
+        try:
+            response = self.post(endpoint, headers=headers, json=json_data)
+            return response.json()['data']['id']
+        except:
+            print(Exception, "Error: Could not get the result data for the question in question()")
+            return
+    # End question
+
+
+    def _parse_question(self, question):
+        """ Get the definition for a sensor """
+        endpoint =  "{}{}".format(self._base_url, self.PARSE_QUESTION)
+
+        data = {
+            "text": question
+        }
+        try:
+            response = self.post(endpoint, json=data)
+            response.raise_for_status()
+            return response.json()
+        except:
+            print(Exception, "Error: Could not parse the question text in parse_question()")
+            return    
+    # End parse_question   
+
+
+    def _output(self, response, output ):
+        """ store session ID and path to output """
 
         if output == "console":
-            # stream results to console
-            self._stream_sensor_results(
-                action_id, package_details["verify_group"]["id"] != 0)
+            # Stream results to console
+            self._stream_sensor_results(response)
+
         elif output == "json":
-            # write json data to file
-            with open('deploy_action_{}.json'.format(datetime.datetime), 'w') as outfile:
-                json.dump(response.json(), outfile, indent=2)
+            # Write json data to file
+            with open('response.json', 'w') as outfile:
+                json.dump(response, outfile, indent=4)
+
         else:
-            print("Error: Invalid output type")
+            print(Exception, " Error: Invalid output type in _output()")
             return
     # End _output
 
-def _stream_sensor_results(self, sessionid):
+    """def _stream_sensor_results(self, response):
+       # Stream results from a sensor to the console 
+       # Initialize PrettyTable
+       table = PrettyTable()
+
+       # Check if there are results
+       if 'results' in response:
+           # Get the keys from the first result to use as the table field names
+           table.field_names = response['results'][0].keys()
+
+           # Loop through the results
+           for result in response['results']:
+               table.add_row(result.values())
+
+       # Print the table
+       print(table)
+    # End _stream_sensor_results 
+    
+    """
+
+    def _stream_sensor_results(self, session_id):
         """ Stream results from a sensor to the console """
-        endpoint = "{}{}".format(self._base_url, self.SENSOR_RESULTS_ENDPOINT).format(
-            sessionid=sessionid)
-        response = self.get(endpoint, stream=True)
-        response.raise_for_status()
 
-        # With PrettyTable print results to console
-        from prettytable import PrettyTable
-        table = PrettyTable(["Computer Name", "Computer ID", "Sensor Name", "Sensor ID", "Sensor Status", "Sensor Result"])
-        table.align["Computer Name"] = "l"
-        table.align["Sensor Name"] = "l"
-        table.align["Sensor Result"] = "l"
+        # Initialize PrettyTable
+        table = PrettyTable()
 
-        # Loop through the results
-        for line in response.iter_lines():
-            if line:
-                # Convert the line to a json object
-                result = json.loads(line.decode('utf-8'))
+        # Start time
+        start_time = time.time()
 
-                # Print the results to the console
-                table.add_row([result["computer_name"], result["computer_id"], result["sensor_name"], result["sensor_id"], result["status"], result["result"]])
-                print(table)
+        # Maximum wait time in seconds
+        max_wait_time = 120
+
+        # Stars to print while waiting for the question to complete
+        stars = ["*"]
+
+        # Continuously poll the sensor results
+        while True:
+            # Get the current results
+            endpoint = "{}{}".format(self._base_url, self.RESULT_DATA.format(session_id=session_id) )
+
+            response = self.get(endpoint)
+            # Convert the response to JSON
+            json_response = response.json()
+
+            # Check if there are results
+            if 'results' in json_response:
+                # Clear the table
                 table.clear_rows()
 
-                # If the status is not "in progress", then exit the loop
-                if result["status"] != "in progress":
-                    break
-        
+                # Get the keys from the first result to use as the table field names
+                table.field_names = response['results'][0].keys()
 
-    # End _stream_sensor_results
+                # Loop through the results
+                for result in response['results']:
+                    table.add_row(result.values())
+
+                # Print the table
+                print(table)
+            
+            # Check if the question is complete
+            if json_response.get('question', {}).get('complete') is True:
+                print("Question complete")
+                break
+            else:
+                #append a start ("*") to the stars list and print it:
+                stars.append("*")
+                print("".join(stars))
+
+
+            # Check if the maximum wait time has been exceeded
+            elapsed_time = time.time() - start_time
+            if elapsed_time > max_wait_time:
+                print("Maximum wait time exceeded. Exiting...")
+                break
+
+            # Wait for a bit before polling again
+            time.sleep(5)
+
 
 if __name__ == "__main__":
-    print("This is a library of classes and methods for the Tanium REST API.")
+    print("This is a library of classes and methods to request sensor questions for the Tanium REST API.")
+

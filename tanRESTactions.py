@@ -1,9 +1,9 @@
 
 
-from tanRESTsession import TaniumSession
+import tanRESTsession
 import json
 import time
-import datetime
+
 
 '''
 This class is for the Tanium REST API actions handling.
@@ -12,7 +12,7 @@ To use the Tanium API-Gateway, please visit:  https://docs.tanium.com/api_gatewa
 '''
 
 
-class TanActions(TaniumSession):
+class TanActions(tanRESTsession.TaniumSession):
 
     # Class variables
     ACTIONS_ENDPOINT = "/api/v2/actions/"
@@ -79,8 +79,8 @@ class TanActions(TaniumSession):
 
         # POST request to deploy the package
         try:
-            response = self.post("{}{}".format(
-                self._base_url, self.ACTIONS_ENDPOINT), json=data)
+            endpoint = "{}{}".format(self._base_url, self.ACTIONS_ENDPOINT)
+            response = self.post(endpoint, json=data)
             response.raise_for_status()
         except Exception as e:
             print("Could not deploy package to endpoints. \n Error: {}".format(e))
