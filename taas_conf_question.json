@@ -6,7 +6,7 @@
     "action": "false",
     "base_url": "https://taas-test-api.cloud.tanium.com",
     "api_key": "token-676da621b843e60543c2bf19004e2962d5f7654d4b452893501821edc4",
-    "parameters": "TestTagAEM1,1",
-    "action_group": "All Windows",
-    "package": "Custom Tagging - Add Tags"
+    "parameters": "",
+    "action_group": "",
+    "package": ""
 }
