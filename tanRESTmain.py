@@ -1,8 +1,20 @@
 '''
+Module Name: tanRESTmain.py
+Description: This module provides classes and methods for interacting with Tanium sensors using the Tanium REST API.
+This script is an example of how to use the Tanium REST API to deploy a package to a single endpoint or a group of endpoints.
+Author: Andy El Maghraby
+Date: 2023-05-31
 
-This script is an example of how to use the Tanium REST API to deploy a package to a
-single endpoint or a group of endpoints.
+Requirements:
+- Python 3.x
+- Required packages: requests, urllib3, argparse, os, json, sys, time, datetime, getpass
 
+Usage:
+- This script can be run from the command line or imported as a module.
+- To run from the command line, use the following syntax:
+    python3 tanRESTmain.py -t <question or action> -c <path to config file> -o <console or file>
+- To import as a module, use the following syntax:
+    from tanRESTmain import TanGetConfig, TanActions, TanSensors
 '''
 #!/usr/bin/env python3
 

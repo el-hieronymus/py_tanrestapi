@@ -1,3 +1,13 @@
+'''
+Module Name: tanRESTsensors.py
+Description: This module is for the Tanium REST API sensors handling.
+For more information about the Tanium REST API, please contact your local TAM.
+To use the Tanium API-Gateway, please visit:  https://docs.tanium.com/api_gateway/api_gateway/overview.html
+
+Author: Andy El Maghraby
+Date: 2023-05-31
+
+'''
 import tanRESTsession
 import time
 import json
@@ -6,11 +16,7 @@ from prettytable import PrettyTable
 
 
 
-'''
-This class is for the Tanium REST API sensors handling.
-For more information about the Tanium REST API, please contact your local TAM.
-To use the Tanium API-Gateway, please visit:  https://docs.tanium.com/api_gateway/api_gateway/overview.html
-'''
+
 class TanSensors(tanRESTsession.TaniumSession):
     # Class variables
     SENSOR_BY_NAME_ENDPOINT = "/api/v2/sensors/by-name/{sensor_name}"
