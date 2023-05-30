@@ -123,6 +123,7 @@ class TanSensors(tanRESTsession.TaniumSession):
             # List to store the latest 10 rows
             latest_rows = []
             print_latest_rows = True
+            number_of_rows_to_keep = 25
 
             # Continuously poll the sensor results
             while True:
@@ -156,8 +157,8 @@ class TanSensors(tanRESTsession.TaniumSession):
                         
                         # Add the row to the latest rows list
                         latest_rows.append(row_data)
-                        # Trim the list to keep only the latest 10 rows
-                        if len(latest_rows) > 10:
+                        # Trim the list to keep only the latest rows
+                        if len(latest_rows) > number_of_rows_to_keep:
                             latest_rows.pop(0)
 
 
