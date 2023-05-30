@@ -97,62 +97,6 @@ class TanSensors(tanRESTsession.TaniumSession):
             return
     # End _output
 
-        """ Stream results from a sensor to the console """
-
-        # Initialize PrettyTable
-        table = PrettyTable()
-
-        # Start time
-        start_time = time.time()
-
-        # Maximum wait time in seconds
-        max_wait_time = 120
-
-        # Stars to print while waiting for the question to complete
-        stars = ["*"]
-
-        # Continuously poll the sensor results
-        while True:
-            # Get the current results
-            endpoint = "{}{}".format(self._base_url, self.RESULT_DATA.format(session_id=session_id) )
-
-            response = self.get(endpoint)
-            # Convert the response to JSON
-            json_response = response.json()
-
-            # Check if there are results
-            if 'results' in json_response:
-                # Clear the table
-                table.clear_rows()
-
-                # Get the keys from the first result to use as the table field names
-                table.field_names = response['results'][0].keys()
-
-                # Loop through the results
-                for result in response['results']:
-                    table.add_row(result.values())
-
-                # Print the table
-                print(table)
-            
-            # Check if the question is complete
-            if json_response.get('question', {}).get('complete') is True:
-                print("Question complete")
-                break
-            else:
-                #append a start ("*") to the stars list and print it:
-                stars.append("*")
-                print("".join(stars))
-
-
-            # Check if the maximum wait time has been exceeded
-            elapsed_time = time.time() - start_time
-            if elapsed_time > max_wait_time:
-                print("Maximum wait time exceeded. Exiting...")
-                break
-
-            # Wait for a bit before polling again
-            time.sleep(5)
 
     def _stream_sensor_results(self, session_id):
             """ Stream results from a sensor to the console """
@@ -165,6 +109,7 @@ class TanSensors(tanRESTsession.TaniumSession):
             table.border = True
             table.valign = "m"
             table.padding_width = 10
+            table.align = "l"
 
             # Start time
             start_time = time.time()
@@ -174,6 +119,10 @@ class TanSensors(tanRESTsession.TaniumSession):
 
             # Stars to print while waiting for the question to complete
             stars = ["*"]
+
+            # List to store the latest 10 rows
+            latest_rows = []
+            print_latest_rows = True
 
             # Continuously poll the sensor results
             while True:
@@ -204,10 +153,24 @@ class TanSensors(tanRESTsession.TaniumSession):
                         # Get the data from the row
                         row_data = [item[0].get('text') for item in row.get('data')]
                         table.add_row(row_data)
+                        
+                        # Add the row to the latest rows list
+                        latest_rows.append(row_data)
+                        # Trim the list to keep only the latest 10 rows
+                        if len(latest_rows) > 10:
+                            latest_rows.pop(0)
+
 
                     # Set table alignment
                     for field_name in column_names:
                         table.align[field_name] = "l"
+
+                    # Check if the latest rows should be printed
+                    if print_latest_rows is True:
+                        # Print the table with the latest 10 rows
+                        table.clear_rows()
+                        for row in latest_rows:
+                            table.add_row(row)
 
                     # Print the table
                     print(table)
