@@ -131,7 +131,7 @@ class TanSensors(tanRESTsession.TaniumSession):
     
     """
 
-    def _stream_sensor_results(self, session_id):
+    def _stream_sensor_results_OLD(self, session_id):
         """ Stream results from a sensor to the console """
 
         # Initialize PrettyTable
@@ -189,6 +189,64 @@ class TanSensors(tanRESTsession.TaniumSession):
             # Wait for a bit before polling again
             time.sleep(5)
 
+def _stream_sensor_results(self, session_id):
+        """ Stream results from a sensor to the console """
+
+        # Initialize PrettyTable
+        table = PrettyTable()
+
+        # Start time
+        start_time = time.time()
+
+        # Maximum wait time in seconds
+        max_wait_time = 120
+
+        # Stars to print while waiting for the question to complete
+        stars = ["*"]
+
+        # Continuously poll the sensor results
+        while True:
+            # Get the current results
+            endpoint = "{}{}".format(self._base_url, self.RESULT_DATA).format(session_id=session_id)
+
+            response = self.get(endpoint)
+            json_response = response.json()
+
+            # Check if there are results
+            if 'rows' in json_response:
+                # Clear the table
+                table.clear_rows()
+
+                # Get the columns from the first result
+                columns = json_response['columns']
+                column_names = [column['name'] for column in columns]
+                table.field_names = column_names
+
+                # Loop through the rows
+                for row in json_response['rows']:
+                    row_data = [item['text'] for item in row['data']]
+                    table.add_row(row_data)
+
+                # Print the table
+                print(table)
+
+            # Check if the question is complete
+            if json_response.get('complete', False):
+                print("Question complete")
+                break
+            else:
+                # Append a star ("*") to the stars list and print it
+                stars.append("*")
+                print("".join(stars))
+
+            # Check if the maximum wait time has been exceeded
+            elapsed_time = time.time() - start_time
+            if elapsed_time > max_wait_time:
+                print("Maximum wait time exceeded. Exiting...")
+                break
+
+            # Wait for a bit before polling again
+            time.sleep(5)
 
 if __name__ == "__main__":
     print("This is a library of classes and methods to request sensor questions for the Tanium REST API.")
