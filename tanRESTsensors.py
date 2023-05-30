@@ -1,6 +1,7 @@
 import tanRESTsession
 import time
 import json
+import os
 from prettytable import PrettyTable
 
 
@@ -173,6 +174,8 @@ class TanSensors(tanRESTsession.TaniumSession):
                         for row in latest_rows:
                             table.add_row(row)
 
+                    # Clear the console screen
+                    os.system('cls' if os.name == 'nt' else 'clear')
                     # Print the table
                     print(table)
 
