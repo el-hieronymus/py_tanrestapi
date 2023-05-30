@@ -30,9 +30,6 @@ class TanSensors(tanRESTsession.TaniumSession):
         #get key '0' from 'data' key in response-dictionary:
         json_data = response['data'][0]
 
-        print("JSON Data: {}".format(json_data))
-        print("Type = {}".format(type(json_data)))
-
         session_id = self._get_question_id(json_data)
 
         self._output(session_id, output)
@@ -166,13 +163,14 @@ class TanSensors(tanRESTsession.TaniumSession):
             # Set table formatting options
             table.header_style = "upper"
             table.border = True
-            table.padding_width = 1
+            table.valign = "m"
+            table.padding_width = 10
 
             # Start time
             start_time = time.time()
 
             # Maximum wait time in seconds
-            max_wait_time = 120
+            max_wait_time = 30
 
             # Stars to print while waiting for the question to complete
             stars = ["*"]
@@ -186,13 +184,13 @@ class TanSensors(tanRESTsession.TaniumSession):
                 json_response = response.json().get('data').get('result_sets')[0]
                 #print ("JSON Response: {}".format(json_response))
 
-                row_count = json_response.get('tested')
+                ep_tested = json_response.get('tested')
                 estimated_total = json_response.get('estimated_total')
-                #print("Row Count: {}".format(row_count))
-                #print("Estimated Total: {}".format(estimated_total))
+                print("Row Count: {}".format(ep_tested))
+                print("Estimated Total: {}".format(estimated_total))
 
                 # Check if there are results
-                if row_count != 0 and row_count is not None: 
+                if ep_tested != 0 and ep_tested is not None: 
                     # Clear the table
                     table.clear_rows()
 
@@ -214,10 +212,10 @@ class TanSensors(tanRESTsession.TaniumSession):
                     # Print the table
                     print(table)
 
-                    # Check if the row_count of question is > 90% of estimated_total then break 
-                    if row_count >= estimated_total * 0.9:
-                        print("Question complete > 90% of estimated_total")
-                        break
+                # Check if the row_count of question is > 90% of estimated_total then break 
+                if ep_tested >= estimated_total * 0.9:
+                    print("Question complete > 90 percent of estimated_total")
+                    break
 
                 # Append a star ("*") to the stars list and print it
                 stars.append("*")
