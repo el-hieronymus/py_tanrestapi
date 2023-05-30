@@ -15,7 +15,8 @@ class TanSensors(tanRESTsession.TaniumSession):
     SENSOR_BY_NAME_ENDPOINT = "/api/v2/sensors/by-name/{sensor_name}"
     PARSE_QUESTION = "/api/v2/parse_question"
     QUESTIONS = "/api/v2/questions"
-    RESULT_DATA = "/api/v2/result_info/question/{session_id}?json_pretty_print=1"
+    RESULT_DATA = "/api/v2/result_data/question/{session_id}?json_pretty_print=1"
+    RESULT_INFO = "/api/v2/result_info/question/{session_id}?json_pretty_print=1"
     # End class variables
     
     def __init__(self, baseurl, api_key, verify=True, timeout=60):
@@ -23,31 +24,19 @@ class TanSensors(tanRESTsession.TaniumSession):
     # End __init__
 
 
-    """def get_question_data(self, question, output="console", wait_time=30):
-        # Get the result data for a question 
-        session_id = self._get_question_id(self._parse_question(question))   # Parse the question and get the session ID
-        
-        time.sleep(wait_time) # Wait for the question to run
-
-        endpoint = "{}{}".format(self._base_url, self.RESULT_DATA.format(session_id=session_id) )
-        try:
-            response = self.get(endpoint)
-            response.raise_for_status()
-            return self._output(response, output)
-        except:
-            print(Exception, " Error: Could not get the result data for the question in get_result_data()")
-            return
-    # End get_result_data
-    """
-
     def get_question_data(self, question, output="console", wait_time=30):
         """ Get the result data for a question """
-        json_data = self._parse_question(question)
+        response = self._parse_question(question)
+        #get key '0' from 'data' key in response-dictionary:
+        json_data = response['data'][0]
+
+        print("JSON Data: {}".format(json_data))
+        print("Type = {}".format(type(json_data)))
+
         session_id = self._get_question_id(json_data)
+
         self._output(session_id, output)
     # End get_question_data
-
-
 
 
     def _get_question_id(self, json_data):
@@ -111,27 +100,6 @@ class TanSensors(tanRESTsession.TaniumSession):
             return
     # End _output
 
-    """def _stream_sensor_results(self, response):
-       # Stream results from a sensor to the console 
-       # Initialize PrettyTable
-       table = PrettyTable()
-
-       # Check if there are results
-       if 'results' in response:
-           # Get the keys from the first result to use as the table field names
-           table.field_names = response['results'][0].keys()
-
-           # Loop through the results
-           for result in response['results']:
-               table.add_row(result.values())
-
-       # Print the table
-       print(table)
-    # End _stream_sensor_results 
-    
-    """
-
-    def _stream_sensor_results_OLD(self, session_id):
         """ Stream results from a sensor to the console """
 
         # Initialize PrettyTable
@@ -189,64 +157,81 @@ class TanSensors(tanRESTsession.TaniumSession):
             # Wait for a bit before polling again
             time.sleep(5)
 
-def _stream_sensor_results(self, session_id):
-        """ Stream results from a sensor to the console """
+    def _stream_sensor_results(self, session_id):
+            """ Stream results from a sensor to the console """
 
-        # Initialize PrettyTable
-        table = PrettyTable()
+            # Initialize PrettyTable
+            table = PrettyTable()
 
-        # Start time
-        start_time = time.time()
+            # Set table formatting options
+            table.header_style = "upper"
+            table.border = True
+            table.padding_width = 1
 
-        # Maximum wait time in seconds
-        max_wait_time = 120
+            # Start time
+            start_time = time.time()
 
-        # Stars to print while waiting for the question to complete
-        stars = ["*"]
+            # Maximum wait time in seconds
+            max_wait_time = 120
 
-        # Continuously poll the sensor results
-        while True:
-            # Get the current results
-            endpoint = "{}{}".format(self._base_url, self.RESULT_DATA).format(session_id=session_id)
+            # Stars to print while waiting for the question to complete
+            stars = ["*"]
 
-            response = self.get(endpoint)
-            json_response = response.json()
+            # Continuously poll the sensor results
+            while True:
+                # Get the current results
+                endpoint = "{}{}".format(self._base_url, self.RESULT_DATA).format(session_id=session_id)
 
-            # Check if there are results
-            if 'rows' in json_response:
-                # Clear the table
-                table.clear_rows()
+                response = self.get(endpoint)
+                json_response = response.json().get('data').get('result_sets')[0]
+                #print ("JSON Response: {}".format(json_response))
 
-                # Get the columns from the first result
-                columns = json_response['columns']
-                column_names = [column['name'] for column in columns]
-                table.field_names = column_names
+                row_count = json_response.get('tested')
+                estimated_total = json_response.get('estimated_total')
+                #print("Row Count: {}".format(row_count))
+                #print("Estimated Total: {}".format(estimated_total))
 
-                # Loop through the rows
-                for row in json_response['rows']:
-                    row_data = [item['text'] for item in row['data']]
-                    table.add_row(row_data)
+                # Check if there are results
+                if row_count != 0 and row_count is not None: 
+                    # Clear the table
+                    table.clear_rows()
 
-                # Print the table
-                print(table)
+                    # Get the columns from the first result
+                    columns = json_response.get('columns')
+                    column_names = [column.get('name') for column in columns]
+                    table.field_names = column_names
 
-            # Check if the question is complete
-            if json_response.get('complete', False):
-                print("Question complete")
-                break
-            else:
+                    # Loop through the rows
+                    for row in json_response.get('rows'):
+                        # Get the data from the row
+                        row_data = [item[0].get('text') for item in row.get('data')]
+                        table.add_row(row_data)
+
+                    # Set table alignment
+                    for field_name in column_names:
+                        table.align[field_name] = "l"
+
+                    # Print the table
+                    print(table)
+
+                    # Check if the row_count of question is > 90% of estimated_total then break 
+                    if row_count >= estimated_total * 0.9:
+                        print("Question complete > 90% of estimated_total")
+                        break
+
                 # Append a star ("*") to the stars list and print it
                 stars.append("*")
                 print("".join(stars))
 
-            # Check if the maximum wait time has been exceeded
-            elapsed_time = time.time() - start_time
-            if elapsed_time > max_wait_time:
-                print("Maximum wait time exceeded. Exiting...")
-                break
+                # Check if the maximum wait time has been exceeded
+                elapsed_time = time.time() - start_time
+                if elapsed_time > max_wait_time:
+                    print("Maximum wait time exceeded. Exiting...")
+                    break
 
-            # Wait for a bit before polling again
-            time.sleep(5)
+                # Wait for a bit before polling again
+                time.sleep(5)
+    # End _stream_sensor_results
 
 if __name__ == "__main__":
     print("This is a library of classes and methods to request sensor questions for the Tanium REST API.")

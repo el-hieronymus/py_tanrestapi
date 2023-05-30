@@ -22,7 +22,7 @@ def _get_config_from_args():
     parser = argparse.ArgumentParser(description="Tanium REST API Configuration")
     parser.add_argument("-c", "--config_file", help="Path to config file", default=None, required=False)
     parser.add_argument("-o", "--output", help="Style of response output: console or file", default="console", required=False)
-    parser.add_argument("-t", "--task", help="Task definition to run either action or question",  required=True)
+    parser.add_argument("-t", "--task", help="Task definition to run either action or sensor",  required=True)
     parser.add_argument("-i", "--info", help="Print this help info", default=None, required=False)
 
     args = parser.parse_args()
