@@ -5,7 +5,20 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "Ask Question",
+            "name": "Ask Question Taas-Dev",
+            "type": "python",
+            "request": "launch",
+            "program": "${workspaceFolder}/tanRESTmain.py",
+            "console": "integratedTerminal",
+            "args": [
+                "--config_file", "./dev_conf_question.json",
+                "--output", "json",
+                "--task", "sensor",
+            ],
+            "justMyCode": true
+        },     
+        {
+            "name": "Ask Question Taas-Test",
             "type": "python",
             "request": "launch",
             "program": "${workspaceFolder}/tanRESTmain.py",
@@ -17,7 +30,6 @@
             ],
             "justMyCode": true
         }, 
-
         {
             "name": "Remove Tags - Debugging",
             "type": "python",

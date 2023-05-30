@@ -1,0 +1,29 @@
+{
+    "data": {
+        "max_available_age": "",
+        "now": "2023/05/26 21:19:59 GMT-0000",
+        "result_sets": [
+            {
+                "age": 0,
+                "archived_question_id": 0,
+                "error_count": 0,
+                "estimated_total": 56,
+                "expire_seconds": 0,
+                "id": 14639814,
+                "issue_seconds": 0,
+                "mr_passed": 57,
+                "mr_tested": 57,
+                "no_results_count": 0,
+                "passed": 57,
+                "question_id": 14639814,
+                "report_count": 46,
+                "row_count": 0,
+                "row_count_machines": 0,
+                "saved_question_id": 0,
+                "seconds_since_issued": 0,
+                "select_count": 0,
+                "tested": 57
+            }
+        ]
+    }
+}

@@ -15,7 +15,7 @@ class TanSensors(tanRESTsession.TaniumSession):
     SENSOR_BY_NAME_ENDPOINT = "/api/v2/sensors/by-name/{sensor_name}"
     PARSE_QUESTION = "/api/v2/parse_question"
     QUESTIONS = "/api/v2/questions"
-    RESULT_DATA = "/api/v2/result_data/question/{session_id}?json_pretty_print=1"
+    RESULT_DATA = "/api/v2/result_info/question/{session_id}?json_pretty_print=1"
     # End class variables
     
     def __init__(self, baseurl, api_key, verify=True, timeout=60):
@@ -42,8 +42,9 @@ class TanSensors(tanRESTsession.TaniumSession):
 
     def get_question_data(self, question, output="console", wait_time=30):
         """ Get the result data for a question """
-        session_id = self._get_question_id(self._parse_question(question))
-        self._stream_sensor_results(session_id)
+        json_data = self._parse_question(question)
+        session_id = self._get_question_id(json_data)
+        self._output(session_id, output)
     # End get_question_data
 
 
@@ -83,17 +84,27 @@ class TanSensors(tanRESTsession.TaniumSession):
     # End parse_question   
 
 
-    def _output(self, response, output ):
+    def _output(self, session_id, output ):
         """ store session ID and path to output """
 
         if output == "console":
             # Stream results to console
-            self._stream_sensor_results(response)
+            self._stream_sensor_results(session_id)
 
         elif output == "json":
+
+            time.sleep(20.0) # Wait for the question to run
+
+             # Get the current results
+            endpoint = "{}{}".format(self._base_url, self.RESULT_DATA.format(session_id=session_id) )
+
+            response = self.get(endpoint)
+            # Convert the response to JSON
+            json_data = response.json()
+
             # Write json data to file
             with open('response.json', 'w') as outfile:
-                json.dump(response, outfile, indent=4)
+                json.dump(json_data, outfile, indent=4)
 
         else:
             print(Exception, " Error: Invalid output type in _output()")

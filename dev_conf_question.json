@@ -1,13 +1,13 @@
 {
-    "question": "Get Installed Applications Computer Name from all machines",
+    "question": "Get Custom Tags from all machines",
     "sensor": "true",
     "target": "",
     "target_question": "Computer Name from all machines",
     "noverify": "true",
     "wait_time": 20,
     "action": "",
-    "base_url": "https://taas-test-api.cloud.tanium.com",
-    "api_key": "token-df5e92fc0d7f5fa8ce9b505dd4c90a8bbc4800bab459d662e691abfd7f",
+    "base_url": "https://taas-dev-api.cloud.tanium.com",
+    "api_key": "token-1c689798c4ca4a8491dbd4eef4f3f008d4b2675613e34b0a71a75e49e0",
     "parameters": "",
     "action_group": "",
     "package": ""
