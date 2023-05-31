@@ -7,7 +7,7 @@ from tanRESToutput import TanOutput
 class TanEnforce(tanRESTsession.TaniumSession):
 
     # Class variables
-    ENFORCEMENT_ID = "/api/v1/enforcements/{id}/details"
+    ENFORCEMENT_ID = "/v1/enforcements/{id}/details"
 
 
     def __init__(self, baseurl, api_key, verify=True, timeout=60):
