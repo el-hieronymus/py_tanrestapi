@@ -24,9 +24,11 @@ import os
 from tanRESTgetconfig import TanGetConfig
 from tanRESTactions import TanActions
 from tanRESTsensors import TanSensors
+from tanRESTenforce import TanEnforce
 
 # Class variables
 CONFIG_FILE = "taas_conf.json"
+DEFAULT_WAIT_TIME = 30
 # End class variables
 
 def _get_config_from_args():
@@ -78,6 +80,8 @@ def _get_config(config_list=None):
         json_config.update({"sensor":True})
     elif config_list["task"] == "action":
         json_config.update({"action":True})
+    elif config_list["task"] == "enforce":
+        json_config.update({"enforce":True})
     else:
         print("Error: Please specify either question or action")
         return
@@ -142,7 +146,7 @@ def main():
         
 
 
-    if config["action"]:
+    if config.get("action"):
         # Create the TaniumSession object
         actions = TanActions(config["base_url"], config["api_key"], not config["noverify"])
         
@@ -154,17 +158,25 @@ def main():
             group_action = {"action_group":config["action_group"], "target_question":config["target_question"], "package":config["package"], "parameters":config["parameters"]}
             actions.deploy_action_multiple_endpoints(group_action, config["output"])
     
-    elif config["sensor"]:
+    elif config.get("sensor"):
         # Create the TaniumSession object
         call_question = TanSensors(config["base_url"], config["api_key"], not config["noverify"])
-
-        default_wait_time = 30
 
         # Get the resulting data for a question
         call_question.get_question_data(
             config["question"],
             config["output"],
-            config.get("wait_time", default_wait_time)
+            config.get("wait_time", DEFAULT_WAIT_TIME)
+        )
+    elif config.get("enforce"):
+        # Create the TaniumSession object
+        enforce = TanEnforce(config["base_url"], config["api_key"], not config["noverify"])
+        
+        # Get the resulting data for a question
+        enforce.get_enforce_policy_enforcement_details(
+            config["policy_id"],
+            config["output"],
+            config.get("wait_time", DEFAULT_WAIT_TIME)
         )
 # End main()
 

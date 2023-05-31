@@ -1,95 +1,28 @@
-'''
-Module Name: tanRESTsensors.py
-Description: This module is for the Tanium REST API sensors handling.
-For more information about the Tanium REST API, please contact your local TAM.
-To use the Tanium API-Gateway, please visit:  https://docs.tanium.com/api_gateway/api_gateway/overview.html
-
-Author: Andy El Maghraby
-Date: 2023-05-31
-
-'''
 import tanRESTsession
-import time
 import json
+import time
+import subprocess
 import os
 from prettytable import PrettyTable
 
 
-
-
-class TanSensors(tanRESTsession.TaniumSession):
-    # Class variables
-    SENSOR_BY_NAME_ENDPOINT = "/api/v2/sensors/by-name/{sensor_name}"
-    PARSE_QUESTION = "/api/v2/parse_question"
-    QUESTIONS = "/api/v2/questions"
-    RESULT_DATA = "/api/v2/result_data/question/{session_id}?json_pretty_print=1"
-    RESULT_INFO = "/api/v2/result_info/question/{session_id}?json_pretty_print=1"
-    # End class variables
-    
+class TanOutput(tanRESTsession.TaniumSession):
     def __init__(self, baseurl, api_key, verify=True, timeout=60):
         super().__init__(baseurl, api_key, verify, timeout)
     # End __init__
 
-
-    def get_question_data(self, question, output="console", wait_time=30):
-        """ Get the result data for a question """
-        response = self._parse_question(question)
-        #get key '0' from 'data' key in response-dictionary:
-        json_data = response['data'][0]
-
-        session_id = self._get_question_id(json_data)
-
-        self._output(session_id, output)
-    # End get_question_data
-
-
-    def _get_question_id(self, json_data):
-        """ Get the session ID for a question """
-        endpoint = "{}{}".format(self._base_url, self.QUESTIONS)
-        
-        headers = {
-            "Content-Type": "application/json"
-        }
-        
-        try:
-            response = self.post(endpoint, headers=headers, json=json_data)
-            return response.json()['data']['id']
-        except:
-            print(Exception, "Error: Could not get the result data for the question in question()")
-            return
-    # End question
-
-
-    def _parse_question(self, question):
-        """ Get the definition for a sensor """
-        endpoint =  "{}{}".format(self._base_url, self.PARSE_QUESTION)
-
-        data = {
-            "text": question
-        }
-        try:
-            response = self.post(endpoint, json=data)
-            response.raise_for_status()
-            return response.json()
-        except:
-            print(Exception, "Error: Could not parse the question text in parse_question()")
-            return    
-    # End parse_question   
-
-
-    def _output(self, session_id, output ):
+    def output(self, endpoint, output="console" ):
         """ store session ID and path to output """
 
+        # Stream results to console
         if output == "console":
-            # Stream results to console
-            self._stream_sensor_results(session_id)
+            self._stream_results_to_console(endpoint)
 
+
+        # Write results to a file        
         elif output == "json":
 
             time.sleep(20.0) # Wait for the question to run
-
-             # Get the current results
-            endpoint = "{}{}".format(self._base_url, self.RESULT_DATA.format(session_id=session_id) )
 
             response = self.get(endpoint)
             # Convert the response to JSON
@@ -105,9 +38,14 @@ class TanSensors(tanRESTsession.TaniumSession):
     # End _output
 
 
-    def _stream_sensor_results(self, session_id):
-            """ Stream results from a sensor to the console """
+    def _stream_results_to_console(self, endpoint):
+            # Stream results from a sensor to the console
 
+            """ PrettyTable Documentation: https://code.google.com/archive/p/prettytable/wikis/Tutorial.wiki
+            PrettyTable Examples: https://pypi.org/project/PrettyTable/
+            
+            Definition of PrettyTable for outut to console:
+            """
             # Initialize PrettyTable
             table = PrettyTable()
 
@@ -118,25 +56,24 @@ class TanSensors(tanRESTsession.TaniumSession):
             table.padding_width = 10
             table.align = "l"
 
-            # Start time
-            start_time = time.time()
-
-            # Maximum wait time in seconds
-            max_wait_time = 30
-
             # Stars to print while waiting for the question to complete
             stars = ["*"]
-
             # List to store the latest 10 rows
             latest_rows = []
             print_latest_rows = True
             number_of_rows_to_keep = 25
 
+
+            """ configure max runtime for question"""
+            # Start time
+            start_time = time.time()
+            # Maximum wait time in seconds
+            max_wait_time = 30
+
+
             # Continuously poll the sensor results
             while True:
                 # Get the current results
-                endpoint = "{}{}".format(self._base_url, self.RESULT_DATA).format(session_id=session_id)
-
                 response = self.get(endpoint)
                 json_response = response.json().get('data').get('result_sets')[0]
                 #print ("JSON Response: {}".format(json_response))
@@ -181,14 +118,13 @@ class TanSensors(tanRESTsession.TaniumSession):
                             table.add_row(row)
 
                     # Clear the console screen
-                    os.system('cls' if os.name == 'nt' else 'clear')
+                    subprocess.call('clear' if os.name == 'posix' else 'cls', shell=True)
                     # Print the table
                     print(table)
-                    table.clear_rows()
 
-                # Check if the row_count of question is > 90% of estimated_total then break 
+                # Check if the row_count of result is > 90% of estimated_total then break 
                 if ep_tested >= estimated_total * 0.9:
-                    print("Question complete > 90 percent of estimated_total")
+                    print("Task completed > 90 percent of estimated_total")
                     break
 
                 # Append a star ("*") to the stars list and print it
@@ -204,7 +140,3 @@ class TanSensors(tanRESTsession.TaniumSession):
                 # Wait for a bit before polling again
                 time.sleep(5)
     # End _stream_sensor_results
-
-if __name__ == "__main__":
-    print("This is a library of classes and methods to request sensor questions for the Tanium REST API.")
-

@@ -1,8 +1,8 @@
 {
     "action_group": "All Windows",
     "package": "Custom Tagging - Add Tags",
-    "target": "",
-    "target_question": "Operating System contains Windows 11",
+    "target": "win11armtest",
+    "target_question": "",
     "noverify": "true",
     "action": "true",
     "base_url": "https://taas-test-api.cloud.tanium.com",

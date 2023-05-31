@@ -177,7 +177,7 @@ class TanActions(tanRESTsession.TaniumSession):
             return
 
         # forward to output:
-        self._output(output, response, package_details)
+        self._output(output, response)
     # End deploy_action_single_endpoint
 
     def _get_action_group_id(self, action_group_name):
@@ -207,6 +207,14 @@ class TanActions(tanRESTsession.TaniumSession):
         return resp.json()["data"]["id"]
     # End _create_anonymous_group
 
+    def _get_sensor_data(self, sensor_name):
+        """ Get the definition for a sensor """
+        endpoint =  "{}{}".format(self._base_url, self.SENSOR_BY_NAME_ENDPOINT).format(sensor_name=sensor_name)
+        response = self.get(endpoint)
+        response.raise_for_status()
+        return response.json()["data"]
+    # End _get_sensor_data
+
     def _stream_action_results(self, action_id):
         """ poll for updated results for an action id """
         evaluated = 0
@@ -235,7 +243,7 @@ class TanActions(tanRESTsession.TaniumSession):
         stars = ["*"]
 
         # Determine what percentage of endpoints have finished with the action
-        while (evaluated < self._completion_percentage or finished < 100.0) and time.time() < end_time:
+        while (evaluated < self._completion_percentage or finished < 90.0) and time.time() < end_time:
             # Get the results
             resp = self.get("{}{}".format(
                 self._base_url, self.RESULTS_ENDPOINT.format(id=action_id)))
@@ -249,7 +257,7 @@ class TanActions(tanRESTsession.TaniumSession):
             # Determine what percentage of endpoints have been evaluated
             evaluated_statuses = ["Expired", "Stopped", "Failed", "Verified", "NotSucceeded", "Completed"]
             total_evaluated_endpoints = len(   [action_status for action_status in action_statuses if action_status in evaluated_statuses]) 
-            row_count = len(result.get("rows", []))
+            row_count = len(result.get("rows"))
             evaluated = 0 if not row_count else float(total_evaluated_endpoints) / float(row_count) * 100.0
 
             # Print the results in a table
@@ -257,20 +265,15 @@ class TanActions(tanRESTsession.TaniumSession):
                 # TODO: Check is values in row with 
                 # "table.add_row([", ".join([value["text"] for value in column]) for column in row["data"]])"
                 # is already in the table, if so, skip it:
-
-                for row in table.rows:
-                    print ("row: %s" % row)
-                    values = [value["text"] for value in row["data"]]
-                    if values not in table.rows:
-                        table.add_row([", ".join([value["text"] for value in column]) for column in row["data"]])
+                row_data = [item[0].get('text') for item in row.get('data')]
+                table.add_row(row_data)
 
             table.align = "c"
             print("\033c")
             print(table)
+            table.clear_rows()
             print("")
             print("Collecting data from %d endpoints" % row_count)
-            print("Percentage of endpoints evaluated: %2f%%" % evaluated)
-            print("Percentage of endpoints finished with action: %2f%%" % finished)
             print("Time elapsed: %d seconds" % (time.time() - start_time))
             print("Time remaining: %d seconds" % (end_time - time.time()))
             print("")

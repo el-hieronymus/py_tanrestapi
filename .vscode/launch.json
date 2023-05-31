@@ -5,20 +5,20 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "Ask Question Taas-Dev",
+            "name": "Get Policy Details",
             "type": "python",
             "request": "launch",
             "program": "${workspaceFolder}/tanRESTmain.py",
             "console": "integratedTerminal",
             "args": [
-                "--config_file", "./dev_conf_question.json",
-                "--output", "json",
-                "--task", "sensor",
+                "--config_file", "./taas_conf_enforce.json",
+                "--output", "console",
+                "--task", "enforce",
             ],
             "justMyCode": true
-        },     
+        },       
         {
-            "name": "Ask Question Taas-Test",
+            "name": "Ask Question_TaaSTest",
             "type": "python",
             "request": "launch",
             "program": "${workspaceFolder}/tanRESTmain.py",
@@ -44,7 +44,7 @@
             "justMyCode": true
         },
         {
-            "name": "Add Tag - Action Debugging",
+            "name": "Add Tag - results.json",
             "type": "python",
             "request": "launch",
             "program": "${workspaceFolder}/tanRESTmain.py",
@@ -52,6 +52,19 @@
             "args": [
                 "--config_file", "./taas_conf_action.json",
                 "--output", "./result.json",
+                "--task", "action",
+            ],
+            "justMyCode": true
+        },
+        {
+            "name": "Add Tag Target - Console",
+            "type": "python",
+            "request": "launch",
+            "program": "${workspaceFolder}/tanRESTmain.py",
+            "console": "integratedTerminal",
+            "args": [
+                "--config_file", "./taas_conf_action-target.json",
+                "--output", "console",
                 "--task", "action",
             ],
             "justMyCode": true

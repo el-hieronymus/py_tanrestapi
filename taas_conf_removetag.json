@@ -2,9 +2,9 @@
     "action_group": "All Windows",
     "package": "aem_Custom Tagging - Remove Tags",
     "target": "",
-    "target_question": "Get Custom Tags contains TestTagAEM3 from all machines with Custom Tags equals TestTagAEM3",
+    "target_question": "Custom Tag Exists[TestTagAEM5,1] matches true",
     "noverify": "true",
     "base_url": "https://taas-test-api.cloud.tanium.com",
-    "api_key": "token-092dae085337711522b47e1c114afcf9d87d60659761f52bb5e0ee3031",
+    "api_key": "token-6e4ae14d465b93cfa4503c678d96039b4789430edd13b62c7b665960f6",
     "parameters": "TestTagAEM3,1"
 }

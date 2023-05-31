@@ -5,6 +5,7 @@
 #
 
 import requests
+from requests.exceptions import JSONDecodeError
 
 
 class TaniumSession(requests.Session):
@@ -42,12 +43,12 @@ class TaniumSession(requests.Session):
         self.verify = verify
     # End __init__
 
-    def request(self, method, url, **kwargs):
+    def request(self, method, endpoint, **kwargs):
         """ Automatically attempt to get a new token for authentication errors """
 
         # If the url is not a full url, then prepend the base url
-        resp = super(TaniumSession, self).request(method, url, **kwargs)
-        print("TaniumSession# Request: {} {}".format(method, url))
+        resp = super(TaniumSession, self).request(method, endpoint, **kwargs)
+        print("TaniumSession# Request: {} {}".format(method, endpoint))
         print("TaniumSession# Response: {}".format(resp.status_code))
 
         # If the response is a 403 or 401, then refresh the session id and retry
@@ -61,13 +62,16 @@ class TaniumSession(requests.Session):
             self._password = getpass.getpass("Password: ")
             
             self.authenticate(self._username, self._password)
-            resp = super(TaniumSession, self).request(method, url, **kwargs)
+            resp = super(TaniumSession, self).request(method, endpoint, **kwargs)
             
         elif resp.status_code is 200:
             return resp
         
         else:
-            print("TaniumSession# Response: {}".format(resp.json()))
+            try:
+                print("TaniumSession# Response: {}".format(resp.json()))
+            except JSONDecodeError:
+                print("TaniumSession# Response: The server returned an empty response.")
         
         raise(resp.raise_for_status() if resp.status_code != 200 else "Unable to authenticate")
         exit()
