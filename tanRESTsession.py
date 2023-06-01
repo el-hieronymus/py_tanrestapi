@@ -6,6 +6,8 @@
 
 import requests
 from requests.exceptions import JSONDecodeError
+import json
+
 
 
 class TaniumSession(requests.Session):
@@ -69,10 +71,28 @@ class TaniumSession(requests.Session):
         
         else:
             try:
-                print("TaniumSession# Response: {}".format(resp.json()))
-            except JSONDecodeError:
-                print("TaniumSession# Response: The server returned an empty response.")
-        
+                print("TaniumSession# Response: {} {}".format(resp.status_code, resp.json()))
+            except JSONDecodeError as e:
+                if "Extra data" in str(e):
+                    data_parts = resp.text.strip().split("\n")
+                    json_data = []
+                    for part in data_parts:
+                        try:
+                            json_data.append(json.loads(part))
+                        except JSONDecodeError:
+                            pass
+                    print("TaniumSession# Multiple JSON responses: {}".format(json_data))
+                else:
+                    print("TaniumSession# Response: {} Cannot decode JSON data.".format(resp.status_code))
+
+            if resp.status_code != 200:
+                if resp.status_code == 404:
+                    print("TaniumSession# Error: 404 Not Found. The requested URL '{}' does not exist.".format(resp.url))
+                else:
+                    print("TaniumSession# Error: {} {}.".format(resp.status_code, resp.reason))
+                resp.raise_for_status()
+
+                
         raise(resp.raise_for_status() if resp.status_code != 200 else "Unable to authenticate")
         exit()
         

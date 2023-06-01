@@ -5,7 +5,20 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "Get Policy Details",
+            "name": "Get Policy Details DEV",
+            "type": "python",
+            "request": "launch",
+            "program": "${workspaceFolder}/tanRESTmain.py",
+            "console": "integratedTerminal",
+            "args": [
+                "--config_file", "./taas_conf_enforce_dev.json",
+                "--output", "console",
+                "--task", "enforce",
+            ],
+            "justMyCode": true
+        },   
+        {
+            "name": "Get Policy Details TEST",
             "type": "python",
             "request": "launch",
             "program": "${workspaceFolder}/tanRESTmain.py",

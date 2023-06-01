@@ -1,8 +1,8 @@
 {
-    "question": "Get Computer Name from all machines with Custom Tags equals TestTagAEM5",
+    "question": "Get Reveal - Index File Details[10,*,*.exe,*,*,*,*,*,*,0,0,\"\",\"\"] from all machines",
     "sensor": "true",
     "target": "",
-    "target_question": "all machines",
+    "target_question": "Is Windows equals true",
     "noverify": "true",
     "wait_time": 20,
     "action": "",

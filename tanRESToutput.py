@@ -16,7 +16,11 @@ class TanOutput(tanRESTsession.TaniumSession):
 
         # Stream results to console
         if output == "console":
-            self._stream_results_to_console(endpoint)
+                # Check if endpoint has a string "v1" or "v2" in it:
+                if "v1" in endpoint:
+                    self._stream_results_v1_to_console(endpoint)
+                else:
+                    self._stream_results_to_console(endpoint)
 
 
         # Write results to a file        
@@ -73,10 +77,11 @@ class TanOutput(tanRESTsession.TaniumSession):
 
             # Continuously poll the sensor results
             while True:
-                # Get the current results
+                # Get the current results and convert the response to JSON
                 response = self.get(endpoint)
+
                 json_response = response.json().get('data').get('result_sets')[0]
-                #print ("JSON Response: {}".format(json_response))
+                print ("JSON Response: {}".format(json_response))
 
                 ep_tested = json_response.get('tested')
                 estimated_total = json_response.get('estimated_total')
@@ -126,6 +131,103 @@ class TanOutput(tanRESTsession.TaniumSession):
                 if ep_tested >= estimated_total * 0.9:
                     print("Task completed > 90 percent of estimated_total")
                     break
+
+                # Append a star ("*") to the stars list and print it
+                stars.append("*")
+                print("".join(stars))
+
+                # Check if the maximum wait time has been exceeded
+                elapsed_time = time.time() - start_time
+                if elapsed_time > max_wait_time:
+                    print("Maximum wait time exceeded. Exiting...")
+                    break
+
+                # Wait for a bit before polling again
+                time.sleep(5)
+    # End _stream_sensor_results
+
+    def _stream_results_v1_to_console(self, endpoint):
+            # Stream results from a sensor to the console
+
+            """ PrettyTable Documentation: https://code.google.com/archive/p/prettytable/wikis/Tutorial.wiki
+            PrettyTable Examples: https://pypi.org/project/PrettyTable/
+            
+            Definition of PrettyTable for outut to console:
+            """
+            # Initialize PrettyTable
+            table = PrettyTable()
+
+            # Set table formatting options
+            table.header_style = "upper"
+            table.border = True
+            table.valign = "m"
+            table.padding_width = 10
+            table.align = "l"
+
+            # Stars to print while waiting for the question to complete
+            stars = ["*"]
+            # List to store the latest 10 rows
+            latest_rows = []
+            print_latest_rows = True
+            number_of_rows_to_keep = 25
+
+
+            """ configure max runtime for question"""
+            # Start time
+            start_time = time.time()
+            # Maximum wait time in seconds
+            max_wait_time = 30
+
+
+            # Continuously poll the sensor results
+            while True:
+                # Get the current results and convert the response to JSON
+                response = self.get(endpoint)
+
+                json_reponse = response.text
+                json_response = json.loads(json_reponse)                  
+                print ("JSON Response: {}".format(json_response))
+
+
+                # Clear the table
+                table.clear_rows()
+
+                # Get the columns from the first result
+                column_names = ["name", "policyId"]
+                table.field_names = column_names
+
+                #print length of json_response['enforcements']::
+                print("Length of json_response['enforcements']: {}".format(len(json_response['enforcements'])))
+
+                # Loop through the rows
+                for row in json_response['enforcements']:
+                    # Get the data from the row
+                    row_data = [row.get('name'), row.get('policyId')]
+                    table.add_row(row_data)
+                    
+                    # Add the row to the latest rows list
+                    latest_rows.append(row_data)
+                    # Trim the list to keep only the latest rows
+                    if len(latest_rows) > number_of_rows_to_keep:
+                        latest_rows.pop(0)
+
+
+                    # Set table alignment
+                    for field_name in column_names:
+                        table.align[field_name] = "l"
+
+                    # Check if the latest rows should be printed
+                    if print_latest_rows is True:
+                        # Print the table with the latest 10 rows
+                        table.clear_rows()
+                        for row in latest_rows:
+                            table.add_row(row)
+
+                    # Clear the console screen
+                    subprocess.call('clear' if os.name == 'posix' else 'cls', shell=True)
+                    # Print the table
+                    print(table)
+
 
                 # Append a star ("*") to the stars list and print it
                 stars.append("*")

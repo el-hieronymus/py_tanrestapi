@@ -5,9 +5,11 @@
     "noverify": "true",
     "wait_time": 20,
     "policy_id": "4",
-    "base_url": "https://taas-test-api.cloud.tanium.com",
-    "api_key": "token-6e4ae14d465b93cfa4503c678d96039b4789430edd13b62c7b665960f6",
+    "base_url": "https://taas-dev-api.cloud.tanium.com",
+    "api_key": "token-20bbc9f715764561524ab9451ebb333892a5d128ad2d0bd3a02f1cc99d",
     "parameters": "",
     "action_group": "",
     "package": ""
 }
+
+

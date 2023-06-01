@@ -171,13 +171,19 @@ def main():
     elif config.get("enforce"):
         # Create the TaniumSession object
         enforce = TanEnforce(config["base_url"], config["api_key"], not config["noverify"])
-        
+
+        #enforce.get_enforce_module_info( config["output"])
+
+        enforce.get_enforce_enforcements( config["output"])
+
+""""
         # Get the resulting data for a question
         enforce.get_enforce_policy_enforcement_details(
             config["policy_id"],
             config["output"],
             config.get("wait_time", DEFAULT_WAIT_TIME)
         )
+"""
 # End main()
 
 if __name__ == "__main__":
