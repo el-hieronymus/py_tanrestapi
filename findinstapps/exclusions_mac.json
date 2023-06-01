@@ -1,0 +1,8 @@
+{
+    "exclusions": [
+      "/Applications/Utilities",
+      "/System",
+      "/Library"
+    ]
+  }
+  

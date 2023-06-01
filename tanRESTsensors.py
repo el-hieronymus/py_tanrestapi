@@ -130,7 +130,7 @@ class TanSensors(tanRESTsession.TaniumSession):
             # List to store the latest 10 rows
             latest_rows = []
             print_latest_rows = True
-            number_of_rows_to_keep = 25
+            number_of_rows_to_keep = 10
 
             # Continuously poll the sensor results
             while True:

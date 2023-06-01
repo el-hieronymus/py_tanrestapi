@@ -1,0 +1,13 @@
+{
+    "num_processes": 4,
+    "exclusions": [
+      "/System",
+      "/Applications"
+    ],
+    "search_paths": [
+      "/",
+      "/Users"
+    ],
+    "extension": ""
+  }
+  

@@ -1,5 +1,5 @@
 {
-    "question": "Get Reveal - Index File Details[10,*,*.exe,*,*,*,*,*,*,0,0,\"\",\"\"] from all machines",
+    "question": "Get Custom Tags from all machines with Custom Tag equals \"TestTagAEM5\"",
     "sensor": "true",
     "target": "",
     "target_question": "Is Windows equals true",

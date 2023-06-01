@@ -39,8 +39,4 @@ class TanEnforce(tanRESTsession.TaniumSession):
 
         stream_output = TanOutput(self._base_url, self._api_key, self.verify, wait_time)
         stream_output.output(endpoint, output)
-    # End get_enforce_enforcements
-
-
-
-# End TanEnforce
+    

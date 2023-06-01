@@ -1,0 +1,14 @@
+{
+    "num_processes": 8,
+    "exclusions": [
+      "C:\\Windows",
+      "C:\\Program Files",
+      "C:\\Program Files (x86)"
+    ],
+    "search_paths": [
+      "C:\\",
+      "D:\\"
+    ],
+    "extension": ".exe"
+  }
+  
